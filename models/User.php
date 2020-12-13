@@ -1,13 +1,19 @@
 <?php
 class User
 {
-    private  static $email = 'nico.rieser@gmail.com';
-    private  static $password =  '1234';
+    private $email = 'nico.rieser@gmail.com';
+    private $password =  '1234';
     private static $user = [];
     private $error = [];
 
 
 
+    /*public function __construct($email, $password)
+    {
+        $this->email = $email;
+        $this->password = $password;
+    }
+    */
     public function __construct()
     {
 
@@ -28,7 +34,8 @@ class User
 
     public function getPassword()
     {
-        return password;
+        return $this->password;
+
     }
 
 
