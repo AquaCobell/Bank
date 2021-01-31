@@ -1,9 +1,9 @@
 <?php
-session_start(); //hallo wie gehts dir
+session_start();
 ?>
 
 <!doctype html>
-<html lang="en">
+<html lang="de">
 <head>
 
     <meta charset="utf-8">
@@ -22,10 +22,10 @@ session_start(); //hallo wie gehts dir
 <?php
 
 require_once "models/CookieHelper.php";
-require_once "models/User.php";
+require_once "models/Kunde.php";
 
 
-$u = new User();
+$u = new kunde();
 
 $message = "";
 
@@ -49,7 +49,7 @@ $message = "";
             {
                 $_SESSION['login'] = "true";
 
-                header('Location:' . "Wochenkarte.php");
+                header('Location:' . "bank.php");
                 exit();
             }
             else
