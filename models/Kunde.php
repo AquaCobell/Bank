@@ -1,16 +1,112 @@
 <?php
-class Kunde implements DatabaseObject
+require_once "DatabaseObject.php";
+require_once "Database.php";
+class Kunde //implements DatabaseObject
 {
+    private $id = '';
     private $email = '';
-    private $password =  '';
+    private $passwort =  '';
     private $kontostand = '';
     private $vorname = '';
-    private $nachname = '';
-    private $iban = '';
-    private $bic = '';
-    private $verfügernr = '';
+    private $BIC = '';
+   
 
-    private $error = [];
+    /**
+     * @return string
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * @param string $id
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+    }
+
+    /**
+     * @return string
+     */
+    public function getVorname()
+    {
+        return $this->vorname;
+    }
+
+    /**
+     * @param string $vorname
+     */
+    public function setVorname($vorname)
+    {
+        $this->vorname = $vorname;
+    }
+
+    /**
+     * @return string
+     */
+    public function getNachname()
+    {
+        return $this->nachname;
+    }
+
+    /**
+     * @param string $nachname
+     */
+    public function setNachname($nachname)
+    {
+        $this->nachname = $nachname;
+    }
+
+    /**
+     * @return string
+     */
+    public function getIban()
+    {
+        return $this->iban;
+    }
+
+    /**
+     * @param string $iban
+     */
+    public function setIban($iban)
+    {
+        $this->iban = $iban;
+    }
+
+    /**
+     * @return string
+     */
+    public function getBic()
+    {
+        return $this->bic;
+    }
+
+    /**
+     * @param string $bic
+     */
+    public function setBic($bic)
+    {
+        $this->bic = $bic;
+    }
+
+    /**
+     * @return string
+     */
+    public function getVerfügernr()
+    {
+        return $this->verfügernr;
+    }
+
+    /**
+     * @param string $verfügernr
+     */
+    public function setVerfügernr($verfügernr)
+    {
+        $this->verfügernr = $verfügernr;
+    }
+
 
     /**
      * @return string
@@ -46,10 +142,10 @@ class Kunde implements DatabaseObject
 
 
 
-    /*public function __construct($email, $password)
+    /*public function __construct($email, $passwort)
     {
         $this->email = $email;
-        $this->password = $password;
+        $this->passwort = $passwort;
     }
     */
     public function __construct()
@@ -70,16 +166,16 @@ class Kunde implements DatabaseObject
     }
 
 
-    public function getPassword()
+    public function getPasswort()
     {
-        return $this->password;
+        return $this->passwort;
 
     }
 
 
-    public function setPassword($password)
+    public function setPasswort($passwort)
     {
-        $this->password = $password;
+        $this->passwort = $passwort;
     }
 
 
@@ -96,14 +192,14 @@ class Kunde implements DatabaseObject
     }
 
 
-    private function validatePassword()
+    private function validatePasswort()
     {
 
-        if(strlen($this->password)<= 0)
+        if(strlen($this->passwort)<= 0)
         {
             return false;
         }
-        else if(strlen($this->password)>20)
+        else if(strlen($this->passwort)>20)
         {
             return false;
         }
@@ -155,7 +251,7 @@ class Kunde implements DatabaseObject
     }
     public function validate()
     {
-        if($this->validateEmail()&& $this->validatePassword() && $this->validateName() && $this->validateNachName())
+        if($this->validateEmail()&& $this->validatePasswort() && $this->validateName() && $this->validateNachName())
         {
             return true;
         }
@@ -186,7 +282,7 @@ class Kunde implements DatabaseObject
     public function update()
     {
         $db = Database::connect();
-        $sql = "UPDATE gast set name = ?, email = ?, adresse = ? WHERE gid = ?";
+        $sql = "UPDATE kunde set name = ?, email = ?, adresse = ? WHERE gid = ?";
         $stmt = $db->prepare($sql);
         $stmt->execute(array($this->name, $this->email, $this->adresse, $this->gid));
         Database::disconnect();
@@ -195,9 +291,9 @@ class Kunde implements DatabaseObject
     public function create()
     {
         $db = Database::connect();
-        $sql = "INSERT INTO kunde (vorname, nachname, email, iban, bic, verfügernr, password) values( ?, ?, ?, ?, ?, ?, ?)";
+        $sql = "INSERT INTO kunde (vorname, nachname, email, iban, bic, verfügernr, passwort) values( ?, ?, ?, ?, ?, ?, ?)";
         $stmt = $db->prepare($sql);
-        $stmt->execute(array($this->vorname, $this->nachname, $this->email, $this->iban, $this->bic, $this->verfügernr, $this->password));
+        $stmt->execute(array($this->vorname, $this->nachname, $this->email, $this->iban, $this->bic, $this->verfügernr, $this->passwort));
         $lastId = $db->lastInsertId();  // get ID of new database-entry
         Database::disconnect();
 
@@ -205,7 +301,7 @@ class Kunde implements DatabaseObject
     }
 
     //private $email = '';
-    //private $password =  '';
+    //private $passwort =  '';
     //private $kontostand = '';
     //private $vorname = '';
     //private $nachname = '';
@@ -219,9 +315,22 @@ class Kunde implements DatabaseObject
     public static function get($id)
     {
         $db = Database::connect();
-        $sql = "SELECT * FROM kunde WHERE gid = ?";
+        $sql = "SELECT * FROM kunde WHERE id = ?";
         $stmt = $db->prepare($sql);
         $stmt->execute(array($id));
+        // fetch dataset (row) per ID, convert to Credentials-object (ORM)
+        $kunde = $stmt->fetchObject('Kunde');
+        Database::disconnect();
+
+        return $kunde !== false ? $kunde : null;
+    }
+
+    public static function getKundewithEmail($email)
+    {
+        $db = Database::connect();
+        $sql = "SELECT * FROM kunde WHERE email = ?";
+        $stmt = $db->prepare($sql);
+        $stmt->execute(array($email));
         // fetch dataset (row) per ID, convert to Credentials-object (ORM)
         $kunde = $stmt->fetchObject('Kunde');
         Database::disconnect();
