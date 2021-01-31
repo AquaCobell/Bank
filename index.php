@@ -32,7 +32,7 @@ $message = "";
 
     if(!checkCookie())
     {
-        cookiesetter();
+        //cookiesetter();
         showCookie();
 
         if (isset($_POST["accept"])) {
@@ -43,14 +43,14 @@ $message = "";
     }
     else
     {
-        if(isset($_GET['login']))
+        if(isset($_POST['login']))
         {
             if ($_POST['password'] == $u->getPassword() && $_POST['email'] == $u->getEmail())
             {
                 $_SESSION['login'] = "true";
 
-
                 header('Location:' . "Wochenkarte.php");
+                exit();
             }
             else
             {

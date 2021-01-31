@@ -59,6 +59,7 @@ class User
     public static function logout()
     {
 
+        
     }
     public static function isLoggedIn()
     {
