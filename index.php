@@ -35,61 +35,69 @@ $u = new kunde();
 $message = "";
 
 
-    if(!checkCookie())
+if(!checkCookie())
+{
+    //cookiesetter();
+    showCookie();
+
+    if (isset($_POST["accept"]))
     {
-        //cookiesetter();
-        showCookie();
-
-        if (isset($_POST["accept"]))
-        {
-            cookiesetter();
-        }
-
+        cookiesetter();
     }
-    else
-    {
-        if(isset($_GET['login'])) {
-            $email = $_POST['email'];
-            $passwort = $_POST['passwort'];
 
-            $kunde = Kunde::getKundewithEmail($email);
-            if($kunde->getPasswort() == $passwort && $kunde->getEmail() == $email  )
-            {
-                $_SESSION['userid'] = $kunde->getID();
-                $_SESSION['login'] = "true";
+}
+else
+{
+    if(isset($_GET['login'])) {
+        $email = $_POST['email'];
+        $passwort = $_POST['passwort'];
 
-                //$_SESSION['userid'] = $user['id'];
-                header('Location: ./bank.php');
-            }
-            else
-            {
-                echo  '<div class="alert alert-danger">Zugangsdaten ungültig!</div>';
-            }
+        $kunde = Kunde::getKundewithEmail($email);
+        if($kunde == null)
+        {
+            echo  '<div class="alert alert-danger">Zugangsdaten ungültig!</div>';
         }
 
+        else if($kunde->getPasswort() == $passwort && $kunde->getEmail() == $email  )
+        {
+            $_SESSION['userid'] = $kunde->getID();
+            $_SESSION['login'] = "true";
 
-        ?>
+            //$_SESSION['userid'] = $user['id'];
+            header('Location: ./bank.php');
+        }
+        else
+        {
+            echo  '<div class="alert alert-danger">Zugangsdaten ungültig!</div>';
+        }
+    }
 
-        <div class="container">
 
-            <h1 class="mt-5 mb-3">Bank</h1>
+    ?>
 
-            <h2 class="ml-4 mt-5">Bitte anmelden</h2>
+    <div class="container">
+
+        <h1 class="mt-5 mb-3">Bank</h1>
+
+        <h2 class="ml-4 mt-5">Bitte anmelden</h2>
         <div class="text-center mt-5">
             <form action='?login' method='post'>
                 <div class="row">
-                <div class="col-sm-4">
-                <input class='form-control' type='email' placeholder='Email' name='email'>
-                </div>
-                <div class="col-sm-4">
-                <input class='form-control' type='password' placeholder='Passwort' name='passwort'>
-                </div>
-                <input class='btn btn-warning' type='submit' name='login' id='login' value='Anmelden'>
+                    <div class="col-sm-4">
+                        <input class='form-control' type='email' placeholder='Email' name='email'>
+                    </div>
+                    <div class="col-sm-4">
+                        <input class='form-control' type='password' placeholder='Passwort' name='passwort'>
+                    </div>
+                    <input class='btn btn-warning' type='submit' name='login' id='login' value='Anmelden'>
+                    <a href="Registrierung.php" class="btn btn-info btn-lg">
+                        <span class="glyphicon glyphicon-log-out"></span> Registrieren
+                    </a>
             </form>
         </div>
     </div>
-<?php
-    }
-    ?>
+    <?php
+}
+?>
 </body>
 </html>

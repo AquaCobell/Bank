@@ -8,7 +8,10 @@ class Kunde //implements DatabaseObject
     private $passwort =  '';
     private $kontostand = '';
     private $vorname = '';
+    private $nachname = '';
     private $BIC = '';
+    private $verfügernr;
+    private $error;
 
 
     /**
@@ -140,14 +143,6 @@ class Kunde //implements DatabaseObject
         $this->error = $error;
     }
 
-
-
-    /*public function __construct($email, $passwort)
-    {
-        $this->email = $email;
-        $this->passwort = $passwort;
-    }
-    */
     public function __construct()
     {
 
@@ -270,7 +265,7 @@ class Kunde //implements DatabaseObject
             else
             {
                 // undefined ID -> new object -> create
-                $this->gid = $this->create();
+                $this->id = $this->create();
             }
 
             return true;
@@ -282,18 +277,18 @@ class Kunde //implements DatabaseObject
     public function update()
     {
         $db = Database::connect();
-        $sql = "UPDATE kunde set name = ?, email = ?, adresse = ? WHERE id = ?";
+        $sql = "UPDATE kunde set vorname = ?, nachname = ?, email = ?, passwort = ?, kontostand = ?  WHERE id = ?";
         $stmt = $db->prepare($sql);
-        $stmt->execute(array($this->name, $this->email, $this->adresse, $this->gid));
+        $stmt->execute(array($this->vorname, $this->nachname, $this->email, $this->passwort, $this->kontostand, $this->id));
         Database::disconnect();
     }
 
     public function create()
     {
         $db = Database::connect();
-        $sql = "INSERT INTO kunde (vorname, nachname, email, iban, bic, verfügernr, passwort) values( ?, ?, ?, ?, ?, ?, ?)";
+        $sql = "INSERT INTO kunde (vorname, nachname, email, passwort) values( ?, ?, ?, ?)";
         $stmt = $db->prepare($sql);
-        $stmt->execute(array($this->vorname, $this->nachname, $this->email, $this->iban, $this->bic, $this->verfügernr, $this->passwort));
+        $stmt->execute(array($this->vorname, $this->nachname, $this->email,  $this->passwort));
         $lastId = $db->lastInsertId();  // get ID of new database-entry
         Database::disconnect();
 
@@ -331,6 +326,19 @@ class Kunde //implements DatabaseObject
         $sql = "SELECT * FROM kunde WHERE email = ?";
         $stmt = $db->prepare($sql);
         $stmt->execute(array($email));
+        // fetch dataset (row) per ID, convert to Credentials-object (ORM)
+        $kunde = $stmt->fetchObject('Kunde');
+        Database::disconnect();
+
+        return $kunde !== false ? $kunde : null;
+    }
+
+    public static function getKundewithIban($iban)
+    {
+        $db = Database::connect();
+        $sql = "SELECT * FROM kunde WHERE iban = ?";
+        $stmt = $db->prepare($sql);
+        $stmt->execute(array($iban));
         // fetch dataset (row) per ID, convert to Credentials-object (ORM)
         $kunde = $stmt->fetchObject('Kunde');
         Database::disconnect();

@@ -1,6 +1,6 @@
 <?php
 session_start();
-
+require_once "models/Kunde.php";
 $pdo = new PDO('mysql:host=localhost;dbname=bank', 'root', '123');
 
 ?>
@@ -22,11 +22,13 @@ $pdo = new PDO('mysql:host=localhost;dbname=bank', 'root', '123');
 <body>
 <?php
 
-if(isset($_GET['Registrierung'])) {
+if(isset($_POST['register'])) {
     $error = false;
     $email = $_POST['email'];
     $passwort = $_POST['passwort'];
     $passwort2 = $_POST['passwort2'];
+    $vorname = $_POST['vorname'];
+    $nachname =  $_POST['nachname'];
 
 
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -41,16 +43,18 @@ if(isset($_GET['Registrierung'])) {
         echo 'Die Passwörter müssen übereinstimmen<br>';
         $error = true;
     }
-    if (!$error) {
-        $statement = $pdo->prepare("SELECT * FROM users WHERE email = :email");
-        $result = $statement->execute(array('email' => $email));
-        $user = $statement->fetch();
+    if (!$error)
+    {
+        $kunde = new Kunde();
+        $kunde->setEmail($email);
+        $kunde->setVorname($vorname);
+        $kunde->setNachname($nachname);
+        $kunde->setPasswort($passwort);
+        $kunde->save();
+        header('Location: ./index.php');
 
-        if ($user !== false) {
-            echo 'Diese E-Mail-Adresse ist bereits vergeben<br>';
-            $error = true;
-        }
     }
+
 }
 
  ?>
@@ -63,21 +67,21 @@ if(isset($_GET['Registrierung'])) {
             <form action='?login' method='post'>
                 <div class="row">
                 <div class="col-sm-4">
-                <input class='form-control' type='text' placeholder='vorname' name='vorname'>
+                <input class='form-control' type='text' placeholder='Vorname' name='vorname'>
                 </div>
                 <div class="col-sm-4">
-                <input class='form-control' type='text' placeholder='nachname' name='nachname'>
+                <input class='form-control' type='text' placeholder='Nachname' name='nachname'>
                 </div>
                 <div class="col-sm-4">
-                <input class='form-control' type='email' placeholder='email' name='email'>
+                <input class='form-control' type='email' placeholder='Email' name='email'>
                 </div>
                 <div class="col-sm-4">
-                <input class='form-control' type='password' placeholder='passwort' name='passwort'>
+                <input class='form-control' type='password' placeholder='Passwort' name='passwort'>
                 </div>
                 <div class="col-sm-4">
-                <input class='form-control' type='password' placeholder='passwort2' name='passwort bestätigen'>
+                <input class='form-control' type='password' placeholder='Passwort bestätigen' name='passwort2'>
                 </div>
-                <input class='btn btn-warning' type='submit' name='login' id='login' value='Anmelden'>
+                <input class='btn btn-warning' type='submit' name='register' id='register' value='Registrieren'>
             </form>
         </div>
     </div>
