@@ -9,7 +9,7 @@ class Kunde //implements DatabaseObject
     private $kontostand = '';
     private $vorname = '';
     private $BIC = '';
-   
+
 
     /**
      * @return string
@@ -282,7 +282,7 @@ class Kunde //implements DatabaseObject
     public function update()
     {
         $db = Database::connect();
-        $sql = "UPDATE kunde set name = ?, email = ?, adresse = ? WHERE gid = ?";
+        $sql = "UPDATE kunde set name = ?, email = ?, adresse = ? WHERE id = ?";
         $stmt = $db->prepare($sql);
         $stmt->execute(array($this->name, $this->email, $this->adresse, $this->gid));
         Database::disconnect();

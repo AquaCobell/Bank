@@ -82,7 +82,13 @@ require_once "models/Kunde.php";
 
     </div>
 
+<div class = "text-center" >
 
+    <a href="überweisung.php" class="btn btn-info btn-lg">
+        <span class="glyphicon glyphicon-log-out"></span> Überweisung
+    </a>
+
+</div>
 <div class = "text-center" >
 
     <a href="logoff.php" class="btn btn-info btn-lg">
@@ -90,9 +96,6 @@ require_once "models/Kunde.php";
     </a>
 
 </div>
-
-
-
 
 
 </body>
