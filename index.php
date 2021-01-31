@@ -1,5 +1,5 @@
 <?php
-session_start(); //hallo
+session_start(); //hallo wie gehts
 ?>
 
 <!doctype html>
